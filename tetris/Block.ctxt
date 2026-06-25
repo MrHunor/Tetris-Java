@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=Block
+comment1.params=
+comment1.target=Block()
+comment2.params=
+comment2.target=void\ act()
+comment3.params=
+comment3.target=void\ handleMovement()
+comment4.params=
+comment4.target=void\ applyGravity()
+comment5.params=xOffset\ yOffset
+comment5.target=boolean\ isTouchingBlock(int,\ int)
+comment6.params=
+comment6.target=void\ lockInPlace()
+numComments=7

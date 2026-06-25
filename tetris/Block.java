@@ -1,61 +1,62 @@
 import greenfoot.*;
 import java.util.*;
+
 public class Block extends Actor {
-    private int fallDelay = 30; // How many frames between each drop
-    private int timer = 0; //used for gravity
-    private boolean isLocked = false; //to check if Block has landed
-    private ArrayList<Integer> blockdimensions = new ArrayList<>();
-    
+    private int fallDelay = 30; 
+    private int timer = 0; 
+    private boolean isLocked = false; 
+    private ArrayList<int[]> blockDimensions = new ArrayList<>();
+
     public Block() {
-        // Create a simple green square for the block
-        switch(Greenfoot.getRandomNumber(4))
-         {
-        case 0://standart block
-        for(int i = 0; i<30;i++)
-        {
-        for(int z = 0; z<30;z++)
-        {
-        blockdimensions.add(1);
+        int shapeType = Greenfoot.getRandomNumber(3); 
+        
+        switch(shapeType) {
+            case 0: // Square Shape
+                blockDimensions.add(new int[]{0, 0});
+                blockDimensions.add(new int[]{1, 0});
+                blockDimensions.add(new int[]{0, 1});
+                blockDimensions.add(new int[]{1, 1});
+                break;
+            case 1: // Straight Line
+                blockDimensions.add(new int[]{0, 0});
+                blockDimensions.add(new int[]{0, 1});
+                blockDimensions.add(new int[]{0, 2});
+                blockDimensions.add(new int[]{0, 3});
+                break;
+            case 2: // L-Shape
+                blockDimensions.add(new int[]{0, 0});
+                blockDimensions.add(new int[]{0, 1});
+                blockDimensions.add(new int[]{0, 2});
+                blockDimensions.add(new int[]{1, 2});
+                break;
         }
-        blockdimensions.add(2);
-        }
-        GreenfootImage img = new GreenfootImage(30, 30);
-        img.setColor(Color.GREEN);
-        img.fill();
-        img.setColor(Color.BLACK); // Outline
-        img.drawRect(0, 0, 29, 29);
-        setImage(img);
-        break;
-    }
-    
+        createPlaceholderImage();
     }
 
-    public void act() {//Act is the engine that is called every frame @ 60fps
-        if (isLocked) return; // Stop executing if the block has landed
-        
+    public void act() {
+        if (isLocked) return; 
+        System.out.println("Block at X:"+getX()+"\nY:"+getY());
         handleMovement();
         applyGravity();
     }
 
     private void handleMovement() {
-
         if (Greenfoot.isKeyDown("left") && timer % 5 == 0) {
-            if (getX() > 0 && !isTouchingBlock(-1, 0)) {
+            if (isValidPosition(getX() - 1, getY())) {
                 setLocation(getX() - 1, getY());
             }
         }
         if (Greenfoot.isKeyDown("right") && timer % 5 == 0) {
-            if (getX() < TetrisWorld.WIDTH - 1 && !isTouchingBlock(1, 0)) {
+            if (isValidPosition(getX() + 1, getY())) {
                 setLocation(getX() + 1, getY());
             }
         }
     }
 
-    private void applyGravity() {//make the block actually fall
+    private void applyGravity() {
         timer++;
         if (timer >= fallDelay) {
-            // Check if we hit the floor or another block
-            if (getY() < TetrisWorld.HEIGHT - 1 && !isTouchingBlock(0, 1)) {
+            if (isValidPosition(getX(), getY() + 1)) {
                 setLocation(getX(), getY() + 1);
             } else {
                 lockInPlace();
@@ -64,16 +65,47 @@ public class Block extends Actor {
         }
     }
     
-    // Checks if there is another block in the direction the player wants to move
-    private boolean isTouchingBlock(int xOffset, int yOffset) {
-        Actor below = getOneObjectAtOffset(xOffset, yOffset, Block.class);
-        return below != null;
+    // NEW COLLISION SYSTEM: Checks absolute grid positions against the world matrix
+    private boolean isValidPosition(int newX, int newY) {
+        TetrisWorld world = (TetrisWorld) getWorld();
+        
+        for (int[] offset : blockDimensions) {
+            int targetX = newX + offset[0];
+            int targetY = newY + offset[1];
+            
+            // Check wall boundaries
+            if (targetX < 0 || targetX >= TetrisWorld.WIDTH || targetY >= TetrisWorld.HEIGHT) {
+                return false;
+            }
+            
+            // Check grid matrix collision
+            if (world.isCellOccupied(targetX, targetY)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void lockInPlace() {
         isLocked = true;
         TetrisWorld world = (TetrisWorld) getWorld();
-        world.spawnPiece(); // Spawn the next piece
+        
+        // Save each sub-block into the world's matrix layout
+        for (int[] offset : blockDimensions) {
+            world.lockCell(getX() + offset[0], getY() + offset[1]);
+        }
+        
+        world.spawnPiece(); 
+    }
+
+    private void createPlaceholderImage() {
+        GreenfootImage img = new GreenfootImage(120, 120);
+        img.setColor(Color.GREEN);
+        for(int[] offset : blockDimensions) {
+            int px = offset[0] * 30;
+            int py = offset[1] * 30;
+            img.fillRect(px, py, 28, 28);
+        }
+        setImage(img);
     }
 }
-

@@ -7,8 +7,8 @@ public class Block extends Actor {
     private boolean isLocked = false; 
     private ArrayList<int[]> blockDimensions = new ArrayList<>();
 
-    public Block() {
-        int shapeType = Greenfoot.getRandomNumber(3); 
+        public Block() {
+        int shapeType = Greenfoot.getRandomNumber(7); 
         
         switch(shapeType) {
             //the pushbacks are the offsets of the original square of the actor 0x0
@@ -24,15 +24,41 @@ public class Block extends Actor {
                 blockDimensions.add(new int[]{0, 2});
                 blockDimensions.add(new int[]{0, 3});
                 break;
-            case 2: // L-Shape
+            case 2: // L-Shape right
                 blockDimensions.add(new int[]{0, 0});
                 blockDimensions.add(new int[]{0, 1});
                 blockDimensions.add(new int[]{0, 2});
                 blockDimensions.add(new int[]{1, 2});
                 break;
+            case 3: // T-Shape
+                blockDimensions.add(new int[]{0, 1});
+                blockDimensions.add(new int[]{1, 0});
+                blockDimensions.add(new int[]{1, 1});
+                blockDimensions.add(new int[]{2, 1});
+                break;
+            case 4: // Z-Shape right
+                blockDimensions.add(new int[]{1, 0});
+                blockDimensions.add(new int[]{2, 0});
+                blockDimensions.add(new int[]{0, 1});
+                blockDimensions.add(new int[]{1, 1});
+                break;
+            case 5: // Z-Shape left
+                blockDimensions.add(new int[]{0, 0});
+                blockDimensions.add(new int[]{1, 0});
+                blockDimensions.add(new int[]{1, 1});
+                blockDimensions.add(new int[]{2, 1});
+                break;
+            case 6: // L-Shape left
+                blockDimensions.add(new int[]{1, 0});
+                blockDimensions.add(new int[]{1, 1});
+                blockDimensions.add(new int[]{0, 2});
+                blockDimensions.add(new int[]{1, 2});
+                break;
+                
         }
         createPlaceholderImage();
     }
+
 
     public void act() {//def game loop
         if (isLocked) return; 
@@ -119,12 +145,27 @@ public class Block extends Actor {
 
     private void createPlaceholderImage() {
         GreenfootImage img = new GreenfootImage(120, 120);
-        img.setColor(Color.GREEN);
+        int shapeType = Greenfoot.getRandomNumber(6);
+        switch(shapeType){
+        case 0: img.setColor(Color.GREEN);
+        break;
+        case 1: img.setColor(Color.BLUE);
+        break;
+        case 2: img.setColor(Color.RED);
+        break;
+        case 3: img.setColor(Color.ORANGE);
+        break;
+        case 4: img.setColor(Color.PINK);
+        break;
+        case 5: img.setColor(Color.YELLOW);
+        break;
+        }
         for(int[] offset : blockDimensions) {
             int px = offset[0] * 30;
             int py = offset[1] * 30;
             img.fillRect(px, py, 28, 28);
         }
         setImage(img);
-    }
+
+}
 }

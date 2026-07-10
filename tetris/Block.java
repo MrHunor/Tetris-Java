@@ -34,11 +34,29 @@ public class Block extends Actor {
         createPlaceholderImage();
     }
 
-    public void act() {
+    public void act() {//def game loop
         if (isLocked) return; 
         System.out.println("Block at X:"+getX()+"\nY:"+getY());
         handleMovement();
         applyGravity();
+             TetrisWorld world = (TetrisWorld) getWorld();
+        for(int i = 0; i<20;i++)
+        {
+            if(world.checkRow(i)==true)
+            {
+                world.deleteRow(i);
+            }
+        }
+        //DO NOT CHANGE THESE VALUES OTHERSWISE ACESS OUT OF BOUNDS
+        for(int i=0; i<world.grid.length; i++)
+        {
+           for(int z =0; z <world.grid[i].length; z++)
+           {
+            if(world.grid[i][z]==false)System.out.print("0");
+            else System.out.print("1");
+          }
+          System.out.println();
+        }
     }
 
     private void handleMovement() {

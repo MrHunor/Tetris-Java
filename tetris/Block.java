@@ -11,6 +11,7 @@ public class Block extends Actor {
         int shapeType = Greenfoot.getRandomNumber(3); 
         
         switch(shapeType) {
+            //the pushbacks are the offsets of the original square of the actor 0x0
             case 0: // Square Shape
                 blockDimensions.add(new int[]{0, 0});
                 blockDimensions.add(new int[]{1, 0});
@@ -65,7 +66,7 @@ public class Block extends Actor {
         }
     }
     
-    // NEW COLLISION SYSTEM: Checks absolute grid positions against the world matrix
+    //
     private boolean isValidPosition(int newX, int newY) {
         TetrisWorld world = (TetrisWorld) getWorld();
         
@@ -90,7 +91,7 @@ public class Block extends Actor {
         isLocked = true;
         TetrisWorld world = (TetrisWorld) getWorld();
         
-        // Save each sub-block into the world's matrix layout
+        // Save each sub-block into the world's layout
         for (int[] offset : blockDimensions) {
             world.lockCell(getX() + offset[0], getY() + offset[1]);
         }

@@ -21,7 +21,7 @@ public class TetrisWorld extends World {
     
     public void lockBorders()
     {
-    for()
+    
     
 }
     
@@ -31,8 +31,10 @@ public class TetrisWorld extends World {
 
     // Call this to see if a specific absolute grid coordinate is already occupied
     public boolean isCellOccupied(int x, int y) {
-        if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) {
-            return true; // Out of bounds counts as occupied (avoids memory misacess)
+        //quick fix to fix werid wall offset
+        if (x < 3 || x >= WIDTH+2 || y < 0 || y >= HEIGHT+1) {
+            System.out.println("Counted X:"+x+"& Y:"+y+" is OCCUPIED");
+            return true; // Out of bounds counts as occupied (avoids memory misacess and out of sight problems)
         }
         return grid[x][y];
     }
